@@ -300,11 +300,9 @@ async function init() {
   try {
     const queries = buildSearchQueries();
 
-    // Fetch city names and flight data in parallel
-    const [, allResults] = await Promise.all([
-      loadCityData(),
-      Promise.allSettled(queries.map(function(q) { return fetchSection(q); })),
-    ]);
+    // Load city data first (needed for domestic filter), then fetch flights
+    await loadCityData();
+    const allResults = await Promise.allSettled(queries.map(function(q) { return fetchSection(q); }));
 
     var html = '';
     var qi = 0;
