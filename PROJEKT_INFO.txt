@@ -1,0 +1,96 @@
+================================================================
+FLYGPRISER — PROJEKTSTATUS
+================================================================
+Senast uppdaterad: 2026-03-28
+
+LIVE: https://emillofkvist.github.io/flygpriser/
+REPO: https://github.com/emillofkvist/flygpriser
+LOKAL: C:\Users\Emil Löfkvist\Claude\Flygpriser\
+
+================================================================
+PROJEKTBESKRIVNING
+================================================================
+Fristående hemsida (separat från dashboarden) som visar de 5
+billigaste returresorna per helgperiod från MMX, AGH och CPH.
+
+Visa: 6 sektioner = 2 helger × 3 perioder
+  - Fredag → Söndag (2 nätter)
+  - Torsdag → Söndag (3 nätter)
+  - Fredag → Måndag (3 nätter)
+
+Per rad visas: avgångstid (tur), returdatum/-tid (avg), pris, flagga
+Klick på rad: öppnar Aviasales-bokningslänk i ny flik
+
+Passageraralternativ:
+  - 👤 1 vuxen
+  - 👫 2 vuxna
+  - 👨‍👩‍👦 2 vuxna + 1 barn (2019)
+  - 👨‍👩‍👧‍👦 2 vuxna + 2 barn (2019, 2012) [default]
+
+================================================================
+FILER
+================================================================
+index.html  — HTML-struktur, all CSS inline
+config2.js  — Konstanter: flygplatser, perioder, passagerare, API-token
+app2.js     — All logik: datum, stadsdata, API-anrop, rendering
+
+OBS: app2.js och config2.js används (inte app.js/config.js) för att
+undvika GitHub Pages CDN-cache-problem med query strings.
+
+================================================================
+TEKNIKSTACK
+================================================================
+Vanilla HTML/CSS/JS — inga ramverk, ingen build-process
+GitHub Pages hosting
+Mörkt tema, max-bredd 680px, mobilanpassad
+CORS-proxy: corsproxy.io (för Travelpayouts priser-API)
+
+================================================================
+API-STATUS
+================================================================
+AKTIVT API: Travelpayouts / Aviasales Data API
+  - Token: 234980474af2c7acb6a0b8d5b95e0b0d (Emil's konto, ID 714365)
+  - Konto: app.travelpayouts.com (inloggad med emil.lofkvist@gmail.com)
+  - Endpoint: GET /v1/prices/cheap
+  - CORS: Kräver proxy → corsproxy.io/?url=https://api.travelpayouts.com/...
+  - Stadsnamn: api.travelpayouts.com/data/en/cities.json (CORS-öppet)
+  - Bokningslänk: aviasales.com/search/{ORIGIN}{DDMM}{DEST}{DDMM}
+  - Begränsning: Cachad data (senaste sökningar, max 48h gammal)
+  - Kostnad: Gratis (affiliate-program)
+
+----------------------------------------------------------------
+UNDERSÖKTA API:er (historik)
+----------------------------------------------------------------
+1. Amadeus: EJ MÖJLIG (dekommissioneras 2026-07-17, reg stängd)
+2. Kiwi Tequila: Ej testat (reg-sida fungerade ej i Chrome-extension)
+3. SerpAPI: Möjlig men kostar $25/mån efter 250 gratis
+4. Travelpayouts: VALT — gratis, fungerar
+5. RapidAPI Flights Scraper: EJ MÖJLIG (50 req/mån gratis)
+6. Skyscanner: EJ MÖJLIG (kräver partnerskap)
+
+================================================================
+DEPLOY-INSTRUKTION
+================================================================
+git add .
+git commit -m "beskrivning"
+git push origin main
+git checkout gh-pages && git merge main && git push origin gh-pages && git checkout main
+
+OBS: GitHub Pages CDN cachar filer. Använd alltid query string i URL
+vid test, t.ex. flygpriser/?v=nytt för att forcera ny HTML från CDN.
+
+================================================================
+SENASTE ÄNDRINGAR
+================================================================
+2026-03-28  Komplett omskrivning: Amadeus -> Travelpayouts API
+            - Emil registrerade sig på app.travelpayouts.com
+            - API-token hämtad: 234980474af2c7acb6a0b8d5b95e0b0d
+            - app2.js + config2.js: ny kod med corsproxy.io
+            - Inga OAuth/token-hantering — token direkt i query
+            - Stadsnamn + flaggor från Travelpayouts cities.json CDN
+            - Bokningslänk: aviasales.com/search/...
+            - Verifierat live: riktiga flygerbjudanden visas
+
+2026-03-27  Projekt skapat. Komplett HTML/CSS/JS med Amadeus-kod.
+            Deployed till GitHub Pages. API fortfarande saknas.
+================================================================
