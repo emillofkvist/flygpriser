@@ -128,6 +128,21 @@
       color: #444;
       text-align: center;
     }
+    img.flag {
+      height: 13px;
+      vertical-align: middle;
+      border-radius: 1px;
+    }
+    .inrikes-label {
+      font-size: 12px;
+      color: #888;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+    .inrikes-label input { cursor: pointer; }
   </style>
 </head>
 <body>
@@ -140,6 +155,9 @@
       <option value="2a1c">2 vuxna + 1 barn (2019)</option>
       <option value="2a2c" selected>2 vuxna + 2 barn (2019, 2012)</option>
     </select>
+    <label class="inrikes-label">
+      <input type="checkbox" id="includeInrikes"> Inkludera inrikes
+    </label>
   </div>
 
   <div id="results"></div>

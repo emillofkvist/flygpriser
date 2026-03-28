@@ -18,7 +18,10 @@ function addDays(date, n) {
 }
 
 function toISODate(date) {
-  return date.toISOString().slice(0, 10);
+  const y = date.getFullYear();
+  const m = String(date.getMonth() + 1).padStart(2, '0');
+  const d = String(date.getDate()).padStart(2, '0');
+  return y + '-' + m + '-' + d;
 }
 
 function toSwedishDate(date) {
@@ -87,15 +90,14 @@ function getCityName(iata) {
   return (cityDb[iata] && cityDb[iata].name) || iata;
 }
 
-function getCityFlag(iata) {
+function getCityFlagHtml(iata) {
   const cc = cityDb[iata] && cityDb[iata].countryCode;
   if (!cc || cc.length !== 2) return '';
-  try {
-    return String.fromCodePoint(
-      0x1F1E6 - 65 + cc.toUpperCase().charCodeAt(0),
-      0x1F1E6 - 65 + cc.toUpperCase().charCodeAt(1)
-    );
-  } catch(e) { return ''; }
+  return '<img class="flag" src="https://flagcdn.com/w20/' + cc.toLowerCase() + '.png" alt="' + cc + '">';
+}
+
+function getCityCountryCode(iata) {
+  return (cityDb[iata] && cityDb[iata].countryCode) || null;
 }
 
 // ============================================================
@@ -144,15 +146,24 @@ async function fetchCheapFromOrigin(origin, departDate, returnDate) {
 }
 
 async function fetchSection(query) {
+  const includeInrikes = document.getElementById('includeInrikes').checked;
+
   const results = await Promise.allSettled(
     CONFIG.AIRPORTS.map(function(airport) {
       return fetchCheapFromOrigin(airport, query.departureDate, query.returnDate);
     })
   );
 
-  const all = results
+  var all = results
     .filter(function(r) { return r.status === 'fulfilled'; })
     .reduce(function(acc, r) { return acc.concat(r.value); }, []);
+
+  // Filter out Swedish domestic flights unless checkbox is checked
+  if (!includeInrikes) {
+    all = all.filter(function(f) {
+      return getCityCountryCode(f.destination) !== 'SE';
+    });
+  }
 
   // Deduplicate by destination: keep cheapest origin per destination
   all.sort(function(a, b) { return a.price - b.price; });
@@ -210,8 +221,8 @@ function renderFlightRow(flight, isFirst, passengerKey) {
   const paxLabel  = totalPax > 1 ? (totalPax + '\u00a0pers') : '1\u00a0pers';
 
   const cityName  = getCityName(flight.destination);
-  const flag      = getCityFlag(flight.destination);
-  const dest      = escapeHtml(cityName) + (flag ? '\u00a0' + flag : '');
+  const flagHtml  = getCityFlagHtml(flight.destination);
+  const dest      = escapeHtml(cityName) + (flagHtml ? '\u00a0' + flagHtml : '');
   const origin    = escapeHtml(flight.origin);
 
   const stopsLabel = flight.transfers === 0 ? 'Direkt' : (flight.transfers + '\u00a0stopp');
@@ -319,4 +330,5 @@ async function init() {
 document.addEventListener('DOMContentLoaded', function() {
   init();
   document.getElementById('passengers').addEventListener('change', init);
+  document.getElementById('includeInrikes').addEventListener('change', init);
 });
