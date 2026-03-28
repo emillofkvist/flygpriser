@@ -1,7 +1,7 @@
 ================================================================
 FLYGPRISER — PROJEKTSTATUS
 ================================================================
-Senast uppdaterad: 2026-03-28
+Senast uppdaterad: 2026-03-28 (session 2)
 
 LIVE: https://emillofkvist.github.io/flygpriser/
 REPO: https://github.com/emillofkvist/flygpriser
@@ -22,10 +22,14 @@ Per rad visas: avgångstid (tur), returdatum/-tid (avg), pris, flagga
 Klick på rad: öppnar Aviasales-bokningslänk i ny flik
 
 Passageraralternativ:
-  - 👤 1 vuxen
+  - 👤 1 vuxen [default]
   - 👫 2 vuxna
   - 👨‍👩‍👦 2 vuxna + 1 barn (2019)
-  - 👨‍👩‍👧‍👦 2 vuxna + 2 barn (2019, 2012) [default]
+  - 👨‍👩‍👧‍👦 2 vuxna + 2 barn (2019, 2012)
+
+Inrikes-filter:
+  - Svenska destinationer döljs som standard
+  - Kryssruta "Inkludera inrikes" bredvid passagerardroplistan
 
 ================================================================
 FILER
@@ -77,11 +81,24 @@ git push origin main
 git checkout gh-pages && git merge main && git push origin gh-pages && git checkout main
 
 OBS: GitHub Pages CDN cachar filer. Använd alltid query string i URL
-vid test, t.ex. flygpriser/?v=nytt för att forcera ny HTML från CDN.
+vid test för att forcera ny HTML från CDN, t.ex. flygpriser/?v=nytt
+OBS: Query strings funkar INTE för att busta .js/.css-filer — CDN
+ignorerar dessa. Lösning: döp om filen (t.ex. app3.js) om cacheproblem.
 
 ================================================================
 SENASTE ÄNDRINGAR
 ================================================================
+2026-03-28  Buggfixar + nya funktioner (session 2)
+            - Datumfix: toISODate använde toISOString() (UTC) → datumet
+              hamnade 1 dag fel i CET. Fix: getFullYear/Month/Date (lokal tid)
+            - Flaggor: Unicode emoji-par renderas ej på Windows Chrome.
+              Fix: <img src="https://flagcdn.com/w20/{cc}.png"> istället
+            - Inrikes-filter: svenska destinationer (countryCode=SE) filtreras
+              bort som standard. Kryssruta "Inkludera inrikes" styr detta.
+            - OBS: cities.json måste laddas FÖRE API-anropen, annars är
+              cityDb tom när filtret körs → SE-destinationer läckte igenom
+            - Default passagerare ändrad till 1 vuxen
+
 2026-03-28  Komplett omskrivning: Amadeus -> Travelpayouts API
             - Emil registrerade sig på app.travelpayouts.com
             - API-token hämtad: 234980474af2c7acb6a0b8d5b95e0b0d
