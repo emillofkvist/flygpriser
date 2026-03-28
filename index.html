@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Flygpriser</title>
+  <title>Billiga Helgresor</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
   <style>
@@ -122,84 +122,21 @@
     @keyframes spin { to { transform: rotate(360deg); } }
     .error-msg { color: #e57373; font-size: 12px; padding: 6px 0; }
     .no-results { color: #555; font-size: 12px; padding: 6px 0; }
-    .api-key-notice {
-      background: #1a1a0a;
-      border: 1px solid #3a3a1a;
-      border-radius: 6px;
-      padding: 10px 14px;
-      font-size: 12px;
-      color: #aaa;
-      margin-top: 20px;
-    }
-    .api-key-notice a {
-      color: #ffcc44;
-      cursor: pointer;
-      text-decoration: underline;
-    }
-    .modal-overlay {
-      display: none;
-      position: fixed;
-      inset: 0;
-      background: rgba(0,0,0,0.7);
-      align-items: center;
-      justify-content: center;
-      z-index: 100;
-    }
-    .modal-overlay.open { display: flex; }
-    .modal {
-      background: #1e1e1e;
-      border: 1px solid #333;
-      border-radius: 10px;
-      padding: 24px;
-      width: 340px;
-      max-width: 95vw;
-    }
-    .modal h2 { font-size: 16px; margin-bottom: 6px; }
-    .modal p { font-size: 12px; color: #888; margin-bottom: 16px; }
-    .modal label { font-size: 12px; color: #aaa; display: block; margin-bottom: 4px; }
-    .modal input {
-      width: 100%;
-      padding: 8px 10px;
-      background: #111;
-      border: 1px solid #444;
-      border-radius: 5px;
-      color: #eee;
-      font-size: 13px;
-      margin-bottom: 12px;
-      font-family: inherit;
-    }
-    .modal button {
-      width: 100%;
-      padding: 9px;
-      background: #4caf50;
-      color: #000;
-      border: none;
-      border-radius: 6px;
-      font-weight: 700;
-      font-size: 13px;
-      cursor: pointer;
-    }
-    .modal button:hover { background: #5bc560; }
-    .modal-footer {
-      margin-top: 10px;
-      font-size: 11px;
-      color: #555;
+    .data-note {
+      margin-top: 24px;
+      font-size: 10px;
+      color: #444;
       text-align: center;
-    }
-    .modal-footer a {
-      color: #888;
-      text-decoration: underline;
-      cursor: pointer;
     }
   </style>
 </head>
 <body>
 
   <div class="header">
-    <h1>&#x2708; Billiga Resor</h1>
+    <h1>&#x2708; Billiga Helgresor</h1>
     <select id="passengers">
-      <option value="1a">1 vuxen</option>
-      <option value="2a">2 vuxna</option>
+      <option value="1a">&#x1F464; 1 vuxen</option>
+      <option value="2a">&#x1F46B; 2 vuxna</option>
       <option value="2a1c">2 vuxna + 1 barn (2019)</option>
       <option value="2a2c" selected>2 vuxna + 2 barn (2019, 2012)</option>
     </select>
@@ -207,26 +144,9 @@
 
   <div id="results"></div>
 
-  <div id="api-key-notice" class="api-key-notice" style="display:none">
-    API-nyckel saknas. <a onclick="openApiKeyModal()">Klicka har for att lagga till din Amadeus API-nyckel</a>
-  </div>
+  <p class="data-note">Priser fr&#xe5;n MMX, AGH och CPH &middot; Via Aviasales/Travelpayouts &middot; Cachat data, ej realtid</p>
 
-  <div class="modal-overlay" id="api-modal">
-    <div class="modal">
-      <h2>Amadeus API-nyckel</h2>
-      <p>Registrera dig gratis pa <strong>developers.amadeus.com</strong> och skapa en app for att fa nycklarna.</p>
-      <label>API Key (Client ID)</label>
-      <input type="text" id="input-api-key" placeholder="xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx" autocomplete="off">
-      <label>API Secret (Client Secret)</label>
-      <input type="password" id="input-api-secret" placeholder="xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx" autocomplete="off">
-      <button onclick="saveApiKey()">Spara och sok</button>
-      <div class="modal-footer">
-        Nycklarna sparas lokalt i din webblasare. <a onclick="clearApiKey()">Ta bort sparad nyckel</a>
-      </div>
-    </div>
-  </div>
-
-  <script src="config.js"></script>
-  <script src="app.js"></script>
+  <script src="config.js?v=2"></script>
+  <script src="app.js?v=2"></script>
 </body>
 </html>
