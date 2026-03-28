@@ -103,18 +103,15 @@ function getCityFlag(iata) {
 // ============================================================
 
 async function fetchCheapFromOrigin(origin, departDate, returnDate) {
-  const params = new URLSearchParams({
-    origin:              origin,
-    depart_date:         departDate,
-    return_date:         returnDate,
-    currency:            CONFIG.CURRENCY,
-    show_to_affiliates:  'true',
-    token:               CONFIG.TP_TOKEN,
-  });
+  const apiUrl = 'https://api.travelpayouts.com/v1/prices/cheap'
+    + '?origin=' + origin
+    + '&depart_date=' + departDate
+    + '&return_date=' + returnDate
+    + '&currency=' + CONFIG.CURRENCY
+    + '&show_to_affiliates=true'
+    + '&token=' + CONFIG.TP_TOKEN;
 
-  const resp = await fetch(
-    'https://api.travelpayouts.com/v1/prices/cheap?' + params.toString()
-  );
+  const resp = await fetch('https://corsproxy.io/?url=' + encodeURIComponent(apiUrl));
   if (!resp.ok) return [];
 
   const json = await resp.json();
@@ -123,23 +120,24 @@ async function fetchCheapFromOrigin(origin, departDate, returnDate) {
   const flights = [];
   const entries = Object.entries(json.data);
   for (var i = 0; i < entries.length; i++) {
-    const dest  = entries[i][0];
-    const stops = entries[i][1];
-    // Key "0" = direct flights; others = with stops. Sort numerically, take cheapest.
-    const stopKeys = Object.keys(stops).sort(function(a, b) {
+    const dest     = entries[i][0];
+    const stopMap  = entries[i][1];
+    // Keys are number of transfers ("0" = direct). Take cheapest available.
+    const stopKeys = Object.keys(stopMap).sort(function(a, b) {
       return parseInt(a) - parseInt(b);
     });
-    const flight = stops[stopKeys[0]];
+    const flight = stopMap[stopKeys[0]];
     if (!flight) continue;
     flights.push({
       origin:      origin,
       destination: dest,
       price:       flight.price,
       airline:     flight.airline || '',
-      transfers:   flight.transfers !== undefined ? flight.transfers : (flight.number_of_changes || 0),
+      transfers:   parseInt(stopKeys[0], 10),
       departureAt: flight.departure_at || null,
       returnAt:    flight.return_at    || null,
-      link:        flight.link         || null,
+      departDate:  departDate,
+      returnDate:  returnDate,
     });
   }
   return flights;
@@ -190,11 +188,16 @@ function escapeHtml(str) {
     .replace(/"/g, '&quot;');
 }
 
+function toAviasalesDate(isoDate) {
+  // "2026-04-04" -> "0404"
+  return isoDate.slice(8, 10) + isoDate.slice(5, 7);
+}
+
 function buildBookingUrl(flight) {
-  if (flight.link) {
-    return CONFIG.TP_AFFILIATE_BASE + flight.link;
-  }
-  return '#';
+  // Aviasales search URL: /search/CPH0404AMS0406
+  const dep = toAviasalesDate(flight.departDate);
+  const ret = toAviasalesDate(flight.returnDate);
+  return CONFIG.TP_BOOKING_BASE + '/' + flight.origin + dep + flight.destination + ret;
 }
 
 function renderFlightRow(flight, isFirst, passengerKey) {

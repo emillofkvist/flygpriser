@@ -1,6 +1,7 @@
 const CONFIG = {
   TP_TOKEN: '234980474af2c7acb6a0b8d5b95e0b0d',
-  TP_AFFILIATE_BASE: 'https://www.aviasales.com',
+  TP_API_BASE: 'https://corsproxy.io/?url=https%3A%2F%2Fapi.travelpayouts.com',
+  TP_BOOKING_BASE: 'https://www.aviasales.com/search',
 
   AIRPORTS: ['MMX', 'AGH', 'CPH'],
   CURRENCY: 'sek',
