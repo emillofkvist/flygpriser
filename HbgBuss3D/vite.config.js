@@ -6,4 +6,13 @@ export default defineConfig({
   optimizeDeps: {
     include: ['maplibre-gl', 'deck.gl', '@deck.gl/react', '@deck.gl/layers'],
   },
+  server: {
+    proxy: {
+      '/trafiklab': {
+        target: 'https://opendata.samtrafiken.se',
+        changeOrigin: true,
+        rewrite: path => path.replace(/^\/trafiklab/, ''),
+      },
+    },
+  },
 })
